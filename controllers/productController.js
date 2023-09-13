@@ -1,20 +1,113 @@
+const Product = require('../model/Product');
 
-const data=[
-    {
-      "userId": 1,
-      "id": 1,
-      "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-      "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
-    },
-    {
-      "userId": 1,
-      "id": 2,
-      "title": "qui est esse",
-      "body": "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla"
-    },
-    
-  ];
 
-module.exports.getAllProduct = (req, res)=>{
-    return res.status(200).json(data);
+module.exports.getAllProduct = async (req, res) => {
+  try {
+    const products = await Product.find({});
+    return res.status(200).json(products);
+  } catch (err) {
+    return res.status(400).json({
+      status: 'error',
+      message: `${err}`
+    });
+  }
+}
+
+
+module.exports.getProductById = async (req, res) => {
+  try {
+    const product = await Product.findOne({ _id: req.params.id });
+    return res.status(200).json(product);
+  } catch (err) {
+    return res.status(400).json({
+      status: 'error',
+      message: `${err}`
+    });
+  }
+}
+
+
+
+module.exports.createProduct = async (req, res) => {
+  const {
+    product_name,
+    product_detail,
+    product_price,
+    brand,
+    category,
+    countInStock
+
+  } = req.body;
+  try {
+
+    await Product.create({
+      product_name,
+      product_detail,
+      product_price,
+      brand,
+      category,
+      countInStock,
+      product_image: req.product_image
+    });
+
+    return res.status(200).json({
+      status: 'success',
+      message: `Successfully Add Product`
+    });
+
+  } catch (err) {
+    return res.status(400).json({
+      status: 'error',
+      message: `${err}`
+    });
+  }
+}
+
+
+module.exports.updateProduct = async (req, res) => {
+  const {
+    product_name,
+    product_detail,
+    product_price,
+    brand,
+    category,
+    countInStock,
+    oldImagePath,
+
+  } = req.body;
+  try {
+    if (req.product_image) {
+      await Product.findByIdAndUpdate({ _id: req.params.id }, {
+        product_name,
+        product_detail,
+        product_price,
+        brand,
+        category,
+        countInStock,
+        product_image: req.product_image
+      });
+    }
+    else {
+      await Product.create({
+        product_name,
+        product_detail,
+        product_price,
+        brand,
+        category,
+        countInStock,
+      });
+    }
+
+
+    return res.status(200).json({
+      status: 'success',
+      message: `Successfully Add Product`
+    });
+
+  } catch (err) {
+    return res.status(400).json({
+      status: 'error',
+      message: `${err}`
+    });
+  }
 }
