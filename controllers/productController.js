@@ -1,4 +1,5 @@
 const Product = require('../model/Product');
+const fs = require('fs');
 
 
 module.exports.getAllProduct = async (req, res) => {
@@ -72,7 +73,7 @@ module.exports.updateProduct = async (req, res) => {
     brand,
     category,
     countInStock,
-    oldImagePath,
+    // oldImagePath,
 
   } = req.body;
   try {
@@ -88,7 +89,7 @@ module.exports.updateProduct = async (req, res) => {
       });
     }
     else {
-      await Product.create({
+      await Product.findByIdAndUpdate({ _id: req.params.id }, {
         product_name,
         product_detail,
         product_price,
@@ -98,10 +99,9 @@ module.exports.updateProduct = async (req, res) => {
       });
     }
 
-
     return res.status(200).json({
       status: 'success',
-      message: `Successfully Add Product`
+      message: `Successfully Update Product`
     });
 
   } catch (err) {
@@ -111,3 +111,31 @@ module.exports.updateProduct = async (req, res) => {
     });
   }
 }
+
+
+
+module.exports.removeProduct = async (req, res) => {
+  const {
+    product_image,
+   } = req.body;
+  try {
+
+    await Product.findByIdAndDelete({ _id : req.params.id    });
+
+    fs.unlink(`.${product_image}`, (err)=>{
+      
+    })
+
+    return res.status(200).json({
+      status: 'success',
+      message: `Successfully Deleted`
+    });
+
+  } catch (err) {
+    return res.status(400).json({
+      status: 'error',
+      message: `${err}`
+    });
+  }
+}
+

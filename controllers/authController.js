@@ -48,16 +48,16 @@ module.exports.userLogin = async (req, res) => {
 module.exports.userRegister = async (req, res) => {
     const { email, password, fullname } = req.body;
     try {
-        const userSExist = await User.findOne({email});
-        if(userSExist){
+        const userExist = await User.findOne({ email });
+        if (userExist) {
             return res.status(400).json({
                 status: "error",
                 message: "User already exist"
             });
         }
-        else{
+        else {
             const hashPass = await bcrypt.hash(password, 12);
-       
+
             await User.create({
                 email,
                 password: hashPass,
@@ -67,7 +67,7 @@ module.exports.userRegister = async (req, res) => {
                 status: "success",
                 message: "Successfully Register"
             });
-        }     
+        }
     }
     catch (err) {
         return res.status(400).json({
@@ -80,6 +80,31 @@ module.exports.userRegister = async (req, res) => {
 
 module.exports.userUpdate = async (req, res) => {
 
+    try {
+        const userExist = await User.findOne({ _id: req.userId });
+        if (userExist) {
+            userExist.fullname = req.body.fullname || userExist.fullname;
+            userExist.email = req.body.email || userExist.email;
+            userExist.shippingAddress = req.body.shippingAddress || userExist.shippingAddress;
+            userExist.save();
+            return res.status(201).json({
+                status: "success",
+                message: "Successfully Update"
+            });
+        }
+        else {
+            return res.status(404).json({
+                status: "error",
+                message: "User Not Found"
+            });
+        }
+    }
+    catch (err) {
+        return res.status(400).json({
+            status: 'error',
+            message: `${err}`
+        });
+    }
 }
 
 

@@ -11,5 +11,6 @@ router.post('/api/create-product',checkUser.adminCheck, checkFile.fileCheck, pro
 // Params
 router.get('/product/:id',productController.getProductById);
 router.patch('/api/update-product/:id',checkUser.adminCheck, checkFile.updateCheck, productController.updateProduct);
+router.delete('/api/remove-product/:id',checkUser.adminCheck, productController.removeProduct);
 
 module.exports = router;

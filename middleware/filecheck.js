@@ -35,7 +35,7 @@ module.exports.fileCheck = (req, res, next) => {
 
 module.exports.updateCheck = (req, res, next) => {
     // console.log(req.files?.product_image);
-    if (req.files?.product_image && req.body?.oldImagePath) {
+    if (req.files?.product_image && req.body?.imagePath) {
         const file = req.files.product_image;
         const validExts = ['.jpg', '.jpeg', '.png'];
 
@@ -44,7 +44,7 @@ module.exports.updateCheck = (req, res, next) => {
                 if (err) {
 
                 }
-                fs.unlink(`.${req.body.oldImagePath}`, (err) => {
+                fs.unlink(`.${req.body.imagePath}`, (err) => {
                     
                 })
                 req.product_image = `/uploads/${file.name}`;
